@@ -1,4 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma.service';
+import { VideoDto } from './dto/video.dto';
 
 @Injectable()
-export class VideosService {}
+export class VideosService {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  create({ filename, minetype, path }: VideoDto) {
+    return this.prismaService.video.create({
+      data: {
+        filename,
+        minetype,
+        path,
+      },
+    });
+  }
+}
