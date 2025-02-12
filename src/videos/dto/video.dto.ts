@@ -8,5 +8,5 @@ export class VideoDto {
   path: string;
 
   @IsString()
-  minetype: string;
+  mimetype: string;
 }

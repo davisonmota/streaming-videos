@@ -23,7 +23,7 @@ export class VideosController {
     return this.videosService.create({
       filename: file.originalname,
       path: file.path,
-      minetype: file.mimetype,
+      mimetype: file.mimetype,
     });
   }
 }

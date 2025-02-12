@@ -17,5 +17,5 @@ model Video {
   id       Int    @id @default(autoincrement())
   filename String
   path     String
-  minetype String
+  mimetype String
 }

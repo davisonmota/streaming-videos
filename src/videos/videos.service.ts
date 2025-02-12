@@ -6,11 +6,11 @@ import { VideoDto } from './dto/video.dto';
 export class VideosService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create({ filename, minetype, path }: VideoDto) {
+  create({ filename, mimetype, path }: VideoDto) {
     return this.prismaService.video.create({
       data: {
         filename,
-        minetype,
+        mimetype,
         path,
       },
     });
