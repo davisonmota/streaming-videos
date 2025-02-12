@@ -12,3 +12,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Video {
+  id       Int    @id @default(autoincrement())
+  filename String
+  path     String
+  minetype String
+}
