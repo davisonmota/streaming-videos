@@ -1,0 +1,9 @@
+services:
+  stream-video-pg:
+    image: bitnami/postgresql
+    environment:
+      - POSTGRESQL_USERNAME=docker
+      - POSTGRESQL_PASSWORD=docker
+      - POSTGRESQL_DATABASE=video
+    ports:
+      - 5432:5432
