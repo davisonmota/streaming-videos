@@ -52,4 +52,18 @@ describe('VideosService', () => {
 
     expect(result).toEqual(mockResponse);
   });
+
+  it('should throw error if prismaService fails', () => {
+    const videoDto: VideoDto = {
+      filename: 'test-video.mp4',
+      mimetype: 'video/mp4',
+      path: '/home/video/test-video.mp4',
+    };
+
+    prismaServiceMock.video.create.mockRejectedValue(
+      new Error('Database error'),
+    );
+
+    void expect(service.create(videoDto)).rejects.toThrow();
+  });
 });
