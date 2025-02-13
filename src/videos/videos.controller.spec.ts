@@ -45,4 +45,24 @@ describe('VideosController', () => {
       mimetype: mockFile.mimetype,
     });
   });
+
+  it('should thrown an error if VideoService.create fails', () => {
+    const mockFile: Express.Multer.File = {
+      fieldname: 'file',
+      originalname: 'GravaÃ§Ã£o de tela de 2025-02-12 18-22-36.webm',
+      encoding: '7bit',
+      mimetype: 'video/webm',
+      destination: './uploadedFiles/videos',
+      filename: '9e43e7cb6b98e08d4975de7fc176baf8',
+      path: 'uploadedFiles/videos/9e43e7cb6b98e08d4975de7fc176baf8',
+      size: 403509,
+      buffer: Buffer.from('test video'),
+      stream: new Readable(),
+    };
+
+    mockServiceVideo.create.mockRejectedValue(new Error('Any error'));
+    const resultPromise = controller.addVideo(mockFile);
+
+    void expect(resultPromise).rejects.toThrow();
+  });
 });
