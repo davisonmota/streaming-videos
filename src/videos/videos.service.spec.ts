@@ -95,4 +95,19 @@ describe('VideosService', () => {
       NotFoundException,
     );
   });
+
+  it('should return video metadata from VideoService.getVideoMetadata', async () => {
+    const mockVideoMetadata = {
+      id: 1,
+      filename: 'test-video.mp4',
+      mimetype: 'video/mp4',
+      path: '/home/video/test-video.mp4',
+    };
+
+    mockPrismaService.video.findUnique.mockResolvedValue(mockVideoMetadata);
+
+    const result = await service.getVideoMetadata(1);
+
+    expect(result).toEqual(mockVideoMetadata);
+  });
 });
