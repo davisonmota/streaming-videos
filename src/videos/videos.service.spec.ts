@@ -137,4 +137,15 @@ describe('VideosService', () => {
     );
     expect(result).toBeInstanceOf(StreamableFile);
   });
+
+  it('should throw NotFoundException if video does not exist', async () => {
+    jest
+      .spyOn(service, 'getVideoMetadata')
+      .mockRejectedValue(new NotFoundException());
+
+    const nonExistentId = 1;
+    const resultPromise = service.getVideoStreamById(nonExistentId);
+    await expect(resultPromise).rejects.toThrow(NotFoundException);
+    expect(service.getVideoMetadata).toHaveBeenCalledWith(nonExistentId);
+  });
 });
