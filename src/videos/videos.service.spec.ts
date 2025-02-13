@@ -3,7 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VideosService } from './videos.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { VideoDto } from './dto/video.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, StreamableFile } from '@nestjs/common';
+import * as fs from 'fs';
+import { join } from 'path';
 
 const mockPrismaService = {
   video: {
@@ -109,5 +111,30 @@ describe('VideosService', () => {
     const result = await service.getVideoMetadata(1);
 
     expect(result).toEqual(mockVideoMetadata);
+  });
+
+  it('should return a StreamableFile when video exists', async () => {
+    const mockVideoMetadata = {
+      id: 1,
+      filename: 'test-video.mp4',
+      mimetype: 'video/mp4',
+      path: '/home/video/test-video.mp4',
+    };
+    jest
+      .spyOn(service, 'getVideoMetadata')
+      .mockResolvedValue(mockVideoMetadata);
+
+    jest.spyOn(fs, 'createReadStream').mockImplementation(() => {
+      return {} as fs.ReadStream;
+    });
+
+    const input = 1;
+    const result = await service.getVideoStreamById(input);
+
+    expect(service.getVideoMetadata).toHaveBeenCalledWith(input);
+    expect(fs.createReadStream).toHaveBeenCalledWith(
+      join(process.cwd(), mockVideoMetadata.path),
+    );
+    expect(result).toBeInstanceOf(StreamableFile);
   });
 });
