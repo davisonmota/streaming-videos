@@ -5,6 +5,7 @@ import { Readable } from 'stream';
 
 const mockServiceVideo = {
   create: jest.fn(),
+  getVideoStreamById: jest.fn(),
 };
 
 describe('VideosController', () => {
@@ -91,5 +92,13 @@ describe('VideosController', () => {
     const result = await controller.addVideo(mockFile);
 
     expect(result).toEqual(mockResponse);
+  });
+
+  it('should call VideoService.getVideoStreamById with correct data', async () => {
+    const input = { id: 1 };
+
+    await controller.streamVideo(input);
+
+    expect(mockServiceVideo.getVideoStreamById).toHaveBeenCalledWith(input.id);
   });
 });

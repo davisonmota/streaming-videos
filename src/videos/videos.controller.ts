@@ -1,5 +1,7 @@
 import {
   Controller,
+  Get,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -7,6 +9,7 @@ import {
 import { VideosService } from './videos.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { FindOnParams } from './dto/find-on-params.dto';
 
 @Controller('videos')
 export class VideosController {
@@ -25,5 +28,10 @@ export class VideosController {
       path: file.path,
       mimetype: file.mimetype,
     });
+  }
+
+  @Get(':id')
+  streamVideo(@Param() { id }: FindOnParams) {
+    return this.videosService.getVideoStreamById(id);
   }
 }
