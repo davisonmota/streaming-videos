@@ -65,4 +65,31 @@ describe('VideosController', () => {
 
     void expect(resultPromise).rejects.toThrow();
   });
+
+  it('should successfully add a video and return the result', async () => {
+    const mockFile: Express.Multer.File = {
+      fieldname: 'file',
+      originalname: 'GravaÃ§Ã£o de tela de 2025-02-12 18-22-36.webm',
+      encoding: '7bit',
+      mimetype: 'video/webm',
+      destination: './uploadedFiles/videos',
+      filename: '9e43e7cb6b98e08d4975de7fc176baf8',
+      path: 'uploadedFiles/videos/9e43e7cb6b98e08d4975de7fc176baf8',
+      size: 403509,
+      buffer: Buffer.from('test video'),
+      stream: new Readable(),
+    };
+
+    const mockResponse = {
+      id: 1,
+      filename: mockFile.originalname,
+      path: mockFile.path,
+      mimetype: mockFile.mimetype,
+    };
+    mockServiceVideo.create.mockResolvedValue(mockResponse);
+
+    const result = await controller.addVideo(mockFile);
+
+    expect(result).toEqual(mockResponse);
+  });
 });
