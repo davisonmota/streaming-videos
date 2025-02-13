@@ -4,9 +4,10 @@ import { VideosService } from './videos.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { VideoDto } from './dto/video.dto';
 
-const prismaServiceMock = {
+const mockPrismaService = {
   video: {
     create: jest.fn(),
+    findUnique: jest.fn(),
   },
 };
 
@@ -18,7 +19,7 @@ describe('VideosService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         VideosService,
-        { provide: PrismaService, useValue: prismaServiceMock },
+        { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
 
@@ -42,7 +43,7 @@ describe('VideosService', () => {
       ...videoDto,
     };
 
-    prismaServiceMock.video.create.mockResolvedValue(mockResponse);
+    mockPrismaService.video.create.mockResolvedValue(mockResponse);
 
     const result = await service.create(videoDto);
 
@@ -60,10 +61,27 @@ describe('VideosService', () => {
       path: '/home/video/test-video.mp4',
     };
 
-    prismaServiceMock.video.create.mockRejectedValue(
+    mockPrismaService.video.create.mockRejectedValue(
       new Error('Database error'),
     );
 
     void expect(service.create(videoDto)).rejects.toThrow();
+  });
+
+  it('should call prismaService.video.findUnique with correct data', async () => {
+    const mockVideoMetadata = {
+      id: 1,
+      filename: 'test-video.mp4',
+      mimetype: 'video/mp4',
+      path: '/home/video/test-video.mp4',
+    };
+
+    mockPrismaService.video.findUnique.mockResolvedValue(mockVideoMetadata);
+
+    await service.getVideoMetadata(1);
+
+    expect(mockPrismaService.video.findUnique).toHaveBeenCalledWith({
+      where: { id: 1 },
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { VideoDto } from './dto/video.dto';
 
@@ -14,5 +14,17 @@ export class VideosService {
         path,
       },
     });
+  }
+
+  async getVideoMetadata(id: number) {
+    const videoMetadata = await this.prismaService.video.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!videoMetadata) throw new NotFoundException();
+
+    return videoMetadata;
   }
 }
