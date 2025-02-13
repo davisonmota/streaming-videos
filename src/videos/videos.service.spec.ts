@@ -149,6 +149,29 @@ describe('VideosService', () => {
     expect(service.getVideoMetadata).toHaveBeenCalledWith(nonExistentId);
   });
 
+  it('should call createReadStream with correct file path', async () => {
+    const mockVideoMetadata = {
+      id: 2,
+      filename: 'video2.mp4',
+      path: '/videos/video2.mp4',
+      mimetype: 'video/mp4',
+    };
+
+    jest
+      .spyOn(service, 'getVideoMetadata')
+      .mockResolvedValue(mockVideoMetadata);
+
+    jest.spyOn(fs, 'createReadStream').mockImplementation(() => {
+      return {} as fs.ReadStream;
+    });
+
+    await service.getVideoStreamById(2);
+
+    expect(fs.createReadStream).toHaveBeenCalledWith(
+      join(process.cwd(), mockVideoMetadata.path),
+    );
+  });
+
   it('should throw error if createReadStream fails', async () => {
     const mockVideoMetadata = {
       id: 1,
