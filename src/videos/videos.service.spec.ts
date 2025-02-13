@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VideosService } from './videos.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { VideoDto } from './dto/video.dto';
+import { NotFoundException } from '@nestjs/common';
 
 const mockPrismaService = {
   video: {
@@ -83,5 +84,15 @@ describe('VideosService', () => {
     expect(mockPrismaService.video.findUnique).toHaveBeenCalledWith({
       where: { id: 1 },
     });
+  });
+
+  it('should throw NotFoundException when video is not found', () => {
+    mockPrismaService.video.findUnique.mockResolvedValue(null);
+
+    const nonExistentId = 3587;
+
+    void expect(service.getVideoMetadata(nonExistentId)).rejects.toThrow(
+      NotFoundException,
+    );
   });
 });
