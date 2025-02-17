@@ -1,6 +1,6 @@
-import { IsNumber } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class FindOnParams {
-  @IsNumber()
-  id: number;
+  @IsString()
+  id: string;
 }

@@ -1,8 +1,11 @@
 import {
   Controller,
   Get,
+  Header,
+  Headers,
   Param,
   Post,
+  Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -10,6 +13,7 @@ import { VideosService } from './videos.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { FindOnParams } from './dto/find-on-params.dto';
+import { Response } from 'express';
 
 @Controller('videos')
 export class VideosController {
@@ -31,7 +35,23 @@ export class VideosController {
   }
 
   @Get(':id')
-  streamVideo(@Param() { id }: FindOnParams) {
-    return this.videosService.getVideoStreamById(id);
+  @Header('Accept-Ranges', 'bytes')
+  async streamVideo(
+    @Param() { id }: FindOnParams,
+    @Headers('range') range: string,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    if (!range) {
+      return this.videosService.getVideoStreamById(+id);
+    }
+    const { streamableFile, contentRange } =
+      await this.videosService.getPartialVideoStream(+id, range);
+
+    response.status(206);
+    response.set({
+      'Content-Range': contentRange,
+    });
+
+    return streamableFile;
   }
 }

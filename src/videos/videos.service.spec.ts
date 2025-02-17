@@ -189,4 +189,12 @@ describe('VideosService', () => {
 
     await expect(service.getVideoStreamById(1)).rejects.toThrow();
   });
+
+  it('should return a valid range object for a correct range', () => {
+    const fileSize = 1000;
+    const range = 'bytes=100-200';
+
+    const result = service.parseRange(range, fileSize);
+    expect(result).toEqual({ start: 100, end: 200 });
+  });
 });
